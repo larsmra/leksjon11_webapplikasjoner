@@ -1,8 +1,8 @@
 {
-  "name": "07_react_v2",
+  "name": "polling_app",
   "version": "1.0.0",
   "description": "",
-  "main": "src/main.js",
+  "main": "./src/main.js",
   "scripts": {
     "dev": "webpack serve --config webpack.development.config.js --mode development",
     "clean": "rm -rf public"
@@ -49,6 +49,7 @@
     "react": "17.0.1",
     "react-dom": "17.0.1",
     "react-router-dom": "^5.2.0",
+    "react-hook-form": "^6.11.1",
     "styled-components": "^5.2.0",
     "styled-normalize": "^8.0.7"
   }

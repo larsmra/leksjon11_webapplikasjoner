@@ -5,14 +5,13 @@ const webpack = require('webpack');
 
 const env = dotenv.config().parsed;
 
-// reduce it to a nice object, the same as before
 const envKeys = Object.keys(env).reduce((prev, next) => {
   prev[`process.env.${next}`] = JSON.stringify(env[next]);
   return prev;
 }, {});
 
 module.exports = {
-  entry: './src/main.js', // defaults to ./src
+  entry: './src/main.js',
   output: {
     path: path.resolve(__dirname, 'public'),
     publicPath: '/',
@@ -33,7 +32,7 @@ module.exports = {
   },
   plugins: [
     new HtmlWebPackPlugin({
-      template: './index.html',
+      template: './src/index.html',
       filename: './index.html',
     }),
     new webpack.DefinePlugin(envKeys),

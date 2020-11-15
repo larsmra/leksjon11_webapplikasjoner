@@ -1,26 +1,20 @@
-import { pollService } from '../services/index';
+import { pollService } from '../services/index.js';
+import catchAsyncErrors from '../middleware/catchAsync.js';
+import ErrorHandler from '../utils/errorHandler.js';
 
-export const get = async (req, res, next) => {
+export const get = catchAsyncErrors(async (req, res, next) => {
   const poll = await pollService.getPollById(req.params.id);
-  /*
-        Error handling here...
-    */
-  res.status(200).json(poll);
-};
+  if (!poll) {
+    return next(new ErrorHandler('Poll not found', 404));
+  }
+  res.status(201).json({ success: true, data: poll });
+});
 
-export const create = async (req, res, next) => {
+export const create = catchAsyncErrors(async (req, res, next) => {
+  req.body.author = req.user.id;
   const poll = await pollService.createPoll(req.body);
-  /*
-        Error handling here...
-    */
-  res.status(200).json(poll);
-};
-
-export const update = async (req, res, next) => {
-  let poll = await pollService.getPollById(req.params.id);
-  /*
-        Error handling here...
-    */
-  poll = await pollService.updatePoll(req.params.id, req.body);
-  res.status(200).json(poll);
-};
+  if (!poll) {
+    return next(new ErrorHandler('Poll was not created', 400));
+  }
+  res.status(201).json({ success: true, data: poll });
+});

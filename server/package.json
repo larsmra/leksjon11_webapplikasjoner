@@ -1,5 +1,5 @@
 {
-  "name": "11_node",
+  "name": "polling_app",
   "version": "1.0.0",
   "description": "",
   "main": "main.js",
@@ -28,6 +28,7 @@
     "mongoose": "^5.10.10",
     "morgan": "^1.10.0",
     "slugify": "^1.4.5",
-    "validator": "^13.1.17"
+    "cookie-parser": "^1.4.5",
+    "csurf": "^1.11.0"
   }
 }

@@ -24,7 +24,12 @@ const QuestionSchema = new Schema({
 
 const PollSchema = new Schema(
   {
-    name: {
+    title: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    description: {
       type: String,
       required: true,
       trim: true,
@@ -40,18 +45,27 @@ const PollSchema = new Schema(
       required: true,
       trim: true,
     },
-    participants: {
-      type: [mongoose.Schema.ObjectId],
-      ref: 'User',
-      unique: [true, 'You can only answer the poll once'],
-    },
   },
   { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
 
-PollSchema.pre('save', (next) => {
-  this.slug = slugify(this.name, { lower: true });
+PollSchema.pre('save', function (next) {
+  this.slug = slugify(this.title, { lower: true });
   next();
+});
+
+PollSchema.virtual('pollExecutions', {
+  ref: 'PollExecution',
+  localField: '_id',
+  foreignField: 'poll',
+  justOne: false,
+});
+
+AnswerSchema.virtual('pollExecutions', {
+  ref: 'PollExecution',
+  localField: '_id',
+  foreignField: 'answers',
+  justOne: false,
 });
 
 export default mongoose.model('Poll', PollSchema);

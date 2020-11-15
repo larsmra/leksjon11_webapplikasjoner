@@ -1,13 +1,19 @@
 import express from 'express';
 import morgan from 'morgan';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
+import csrf from 'csurf';
 
-import { PORT } from './constants/index';
+import { PORT } from './constants/index.js';
 import 'dotenv/config.js';
 
-import connectDatabase from './config/db';
-import poll from './routes/poll';
-import user from './routes/user';
+import errorMiddleware from './middleware/errors.js';
+import connectDatabase from './config/db.js';
+
+import poll from './routes/poll.js';
+import user from './routes/user.js';
+import auth from './routes/auth.js';
+import pollExecution from './routes/pollExecution.js';
 
 const app = express();
 
@@ -20,14 +26,24 @@ app.use(express.json());
 app.use(
   cors({
     origin: 'http://localhost:3000',
-    allowedHeaders: ['Content-Type'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'x-csrf-token'],
+    credentials: true,
   })
 );
 
-app.use(`${process.env.BASEURL}/poll`, poll);
-app.use(`${process.env.BASEURL}/user`, user);
+app.use(cookieParser());
+app.use(csrf({ cookie: true }));
 
-// app.use(/* errorMiddleware */);
+app.get(`${process.env.BASEURL}/csrf-token`, (req, res) => {
+  res.status(200).json({ data: req.csrfToken() });
+});
+
+app.use(`${process.env.BASEURL}/polls`, poll);
+app.use(`${process.env.BASEURL}/users`, user);
+app.use(`${process.env.BASEURL}/execution`, pollExecution);
+app.use(`${process.env.BASEURL}/`, auth);
+
+app.use(errorMiddleware);
 
 connectDatabase();
 
